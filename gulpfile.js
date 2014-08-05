@@ -159,9 +159,10 @@
 
   gulp.task("webdriver_update", factory.webdriveUpdate());
   gulp.task("test:e2e:ng:core", factory.testE2EAngular());
+  gulp.task("test:ensure-directory", factory.ensureReportDirectory());
 
   // Test the Angular version
-  gulp.task("test:e2e:ng", ["webdriver_update"], function (cb) {
+  gulp.task("test:e2e:ng", ["test:ensure-directory", "webdriver_update"], function (cb) {
     return runSequence("e2e:server", "test:e2e:ng:core",
     function (err) {
       gulp.run("e2e:server-close");
