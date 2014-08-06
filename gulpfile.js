@@ -9,8 +9,6 @@
   var rimraf = require("gulp-rimraf");
   var concat = require("gulp-concat");
   var bump = require("gulp-bump");
-  var sass = require("gulp-sass");
-  var minifyCSS = require("gulp-minify-css");
   var runSequence = require("run-sequence");
   var jshint = require("gulp-jshint");
   var uglify = require("gulp-uglify");
@@ -62,27 +60,6 @@
   gulp.task("images", function () {
     return gulp.src("img/**/*.*", {base: "./"})
       .pipe(gulp.dest("dist/img"));
-  });
-
-  gulp.task("sass", function () {
-    return gulp.src("src/sass/main.scss")
-      .pipe(sass())
-      .pipe(gulp.dest("tmp/css"));
-  });
-
-  gulp.task("css", ["sass"], function () {
-    return gulp.src("tmp/css/main.css")
-      .pipe(rename("google-drive-picker.css"))
-      .pipe(gulp.dest("dist/css"));
-  });
-
-  gulp.task("css-min", ["css"], function () {
-    return gulp.src("dist/css/google-drive-picker.css")
-      .pipe(minifyCSS({keepBreaks:true}))
-      .pipe(rename(function (path) {
-        path.basename += ".min";
-      }))
-      .pipe(gulp.dest("dist/css"));
   });
 
   gulp.task("jquery:html2js", function () {
@@ -138,7 +115,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config"], ["images", "js-uglify"/*, "css-min"*/], cb);
+    runSequence(["clean", "config"], ["images", "js-uglify"], cb);
   });
 
   gulp.task("e2e:server", factory.testServer());
