@@ -1,6 +1,15 @@
-var CONFIG = {
-  GOOGLE_CLIENT_ID: "614513768474.apps.googleusercontent.com"
-};
+/* global CONFIG: true */
+/* exported CONFIG */
+if (typeof CONFIG === "undefined") {
+  var CONFIG = {
+    GOOGLE_CLIENT_ID: "614513768474.apps.googleusercontent.com"
+  };
+}
+
+/* global CONFIG: true */
+/* global RiseVision: true */
+/* global gapi: false */
+/* exported RiseVision */
 
 if (typeof RiseVision === "undefined") {
   var RiseVision = {Authorization: {}};
