@@ -1,3 +1,8 @@
+/* global CONFIG: true */
+/* global RiseVision: true */
+/* global gapi: false */
+/* exported RiseVision */
+
 if (typeof RiseVision === "undefined") {
   var RiseVision = {Authorization: {}};
 }

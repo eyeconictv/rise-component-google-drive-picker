@@ -20,14 +20,13 @@
     });
 
     it("Should correctly load", function () {
-      expect(element(by.css("#google-drive-picker img"))
-        .getAttribute("src"))
-        .to.eventually.equal("http://127.0.0.1:8099/img/widget-icon-drive-1x.png");
+      expect(element(by.css(".btn-google-drive"))
+        .isPresent()).to.eventually.be.true;
     });
 
     it("Should correctly pick a file", function () {
       //open dialog
-      element(by.id("google-drive-picker")).click();
+      element(by.css(".btn-google-drive")).click();
       //simulate picks
       element(by.id("simulate-pick")).click();
       expect(element.all(by.css("#files-picked .file")).count()).to.
@@ -39,7 +38,7 @@
       expect(element(by.id("cancelled")).getAttribute("checked")).
         to.eventually.be.null;
       //open dialog
-      element(by.id("google-drive-picker")).click();
+      element(by.css(".btn-google-drive")).click();
       //simulate picks
       element(by.id("simulate-cancel")).click();
       expect(element(by.id("cancelled")).getAttribute("checked")).
