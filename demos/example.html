@@ -3,37 +3,16 @@
     <h1 class="page">Google Drive Picker</h1>
   </div>
 
-  <p class="lead">An Angular directive or jQuery plugin that provides a button to launch the Google Drive Picker modal and select a file based on a file type that you provide.</p>
+  <p class="lead">An Angular directive that provides a button to launch the Google Drive Picker modal and select a file based on a file type that you provide.</p>
 
   <p><strong>Dependencies</strong> <span class="label label-info">Google Client JSAPI</span></p>
 
-  <h3>Usage</h3>
-  <strong>Angular</strong>
-  <ul>
-    <li>Include the following files:
-      <hljs include="'angular-script-includes'"></hljs>
-    </li>
-    <li>Add the directive:
-      <hljs>
-        <google-drive-picker view-id="spreadsheets"></google-drive-picker>
-      </hljs>
-    </li>
-  </ul>
+  <h3 class="add-top">Usage</h3>
+  <hljs include="'google-drive-picker-usage'"></hljs>
 
-  <strong>jQuery</strong>
-  <ul>
-    <li>Include the following files:
-      <hljs include="'jquery-script-includes'"></hljs>
-    </li>
-    <li>Add the HTML:
-      <hljs>
-        <div id="google-drive-picker"></div>
-      </hljs>
-    </li>
-    <li>Call the plugin:
-      <hljs include="'jquery-usage'"></hljs>
-    </li>
-  </ul>
+  <h3>Script Includes</h3>
+  <p>Make sure you include the following files in <code>index.html</code></p>
+  <hljs include="'script-includes'"></hljs>
 
   <!-- Dynamic Example -->
   <div class="examples">
@@ -42,18 +21,14 @@
   </div>
 </div>
 
-<script type="text/ng-template" id="angular-script-includes">
+<script type="text/ng-template" id="script-includes">
   //apis.google.com/js/client.js
   /components/component-google-drive-picker/dist/js/angular/google-drive-picker.min.js
 </script>
 
-<script type="text/ng-template" id="jquery-script-includes">
-  //apis.google.com/js/client.js
-  /components/component-google-drive-picker/dist/js/jquery/google-drive-picker.min.js
-</script>
-
-<script type="text/ng-template" id="jquery-usage">
-  <script type="text/javascript">
-    $picker.googleDrivePicker({viewId: "spreadsheets"});
-  </ script>
+<!-- Code Snippet -->
+<script type="text/ng-template" id="google-drive-picker-usage">
+  <form role="form">
+    <google-drive-picker view-id="spreadsheets"></google-drive-picker>
+  </form>
 </script>
