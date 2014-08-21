@@ -52,11 +52,6 @@
       .pipe(jshint.reporter("fail"));
   });
 
-  gulp.task("images", function () {
-    return gulp.src("img/**/*.*", {base: "./"})
-      .pipe(gulp.dest("dist/img"));
-  });
-
   gulp.task("angular:html2js", function() {
     return gulp.src("src/angular/*.html")
       .pipe(html2js({
@@ -88,7 +83,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config"], ["images", "js-uglify"], cb);
+    runSequence(["clean", "config"], ["js-uglify"], cb);
   });
 
   gulp.task("e2e:server", factory.testServer());
