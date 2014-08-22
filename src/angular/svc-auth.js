@@ -1,7 +1,7 @@
 (function(angular) {
   "use strict";
 
-  angular.module("risevision.common.auth", ["risevision.common.gapi"])
+  angular.module("risevision.widget.common.google-drive-picker")
 
     .value("CLIENT_ID", "614513768474.apps.googleusercontent.com")
     .value("SCOPE", ["https://www.googleapis.com/auth/drive"])
@@ -23,13 +23,13 @@
 
           oauthAPILoader.get().then(function (gApi) {
             gApi.auth.authorize(opts, function (authResult) {
-              $log.debug("authResult", authResult);
 
               if (authResult && !authResult.error) {
                 oauthToken = authResult.access_token;
                 authorizeDeferred.resolve(authResult);
               } else {
                 authorizeDeferred.reject("Authentication Error: " + authResult.error);
+                $log.debug("authorize result", authResult);
               }
             });
           });

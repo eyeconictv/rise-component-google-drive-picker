@@ -13,9 +13,9 @@ function handleClientJSLoad() {
 (function (angular) {
   "use strict";
 
-  angular.module("risevision.common.gapi", [])
-    .factory("oauthAPILoader", ["gapiLoader", "$q", "$log",
-      function (gapiLoader, $q, $log) {
+  angular.module("risevision.widget.common.google-drive-picker")
+    .factory("oauthAPILoader", ["$q", "$log", "gapiLoader",
+      function ($q, $log, gapiLoader) {
         var deferred = $q.defer();
         var promise;
 
@@ -56,6 +56,30 @@ function handleClientJSLoad() {
             return deferred.promise;
           }
         };
+        return factory;
+
+      }])
+    .factory("pickerLoader", ["$q", "$window", "$log", "gapiLoader",
+      function($q, $window, $log, gapiLoader) {
+
+        var factory = {
+          get: function () {
+            var deferred = $q.defer();
+            var promise;
+
+            if (!promise) {
+              promise = deferred.promise;
+              gapiLoader.get().then(function (gApi) {
+                gApi.load("picker", function () {
+                  $log.info("picker API is loaded");
+                  deferred.resolve(gApi);
+                });
+              });
+            }
+            return promise;
+          }
+        };
+
         return factory;
 
       }]);

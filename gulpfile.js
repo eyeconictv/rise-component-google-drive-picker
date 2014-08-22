@@ -66,9 +66,11 @@
   gulp.task("angular", ["angular:html2js", "lint"], function () {
     return gulp.src([
       "src/config/config.js",
-      "src/google-authorization.js",
       "src/angular/dtv-google-drive-picker.js",
-      "tmp/ng-templates/*.js"])
+      "tmp/ng-templates/*.js",
+      "src/angular/svc-gapi.js",
+      "src/angular/svc-auth.js",
+      "src/angular/svc-picker.js"])
       .pipe(concat("google-drive-picker.js"))
       .pipe(gulp.dest("dist/js/angular"));
   });
