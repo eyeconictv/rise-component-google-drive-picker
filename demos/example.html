@@ -8,10 +8,11 @@
   <p><strong>Dependencies</strong> <span class="label label-info">Google Client JSAPI</span></p>
 
   <h3 class="add-top">Usage</h3>
+  <p>When clicking the Google Drive Picker button, you may need to authenticate yourself to use Google Picker by entering your Google credentials. Once authorized, the Google Picker modal is launched and you are prompted to select a file of your choice. By default, all Google Drive document types are displayed. You can specify a particular document type by providing a <code>view-id</code> attribute to the directive and the appropriate view type as the value. Refer to the Google Picker <a href="https://developers.google.com/picker/docs/reference#ViewId" target="_blank">documentation</a> for a complete list of View Ids.</p>
   <hljs include="'google-drive-picker-usage'"></hljs>
 
   <h3>Script Includes</h3>
-  <p>Make sure you include the following files in <code>index.html</code></p>
+  <p>Make sure you include the following files in <code>index.html</code> in this exact order. Be sure to include the callback function <code>handleClientJSLoad</code> for the <code>onload</code> event of the Google Client JSAPI.</p>
   <hljs include="'script-includes'"></hljs>
 
   <!-- Dynamic Example -->
@@ -22,8 +23,8 @@
 </div>
 
 <script type="text/ng-template" id="script-includes">
-  //apis.google.com/js/client.js
   /components/component-google-drive-picker/dist/js/angular/google-drive-picker.min.js
+  //apis.google.com/js/client.js?onload=handleClientJSLoad
 </script>
 
 <!-- Code Snippet -->
