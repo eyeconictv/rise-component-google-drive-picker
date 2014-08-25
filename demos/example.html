@@ -8,7 +8,9 @@
   <p><strong>Dependencies</strong> <span class="label label-info">Google Client JSAPI</span></p>
 
   <h3 class="add-top">Usage</h3>
-  <p>When clicking the Google Drive Picker button, you may need to authenticate yourself to use Google Picker by entering your Google credentials. Once authorized, the Google Picker modal is launched and you are prompted to select a file of your choice. By default, all Google Drive document types are displayed. You can specify a particular document type by providing a <code>view-id</code> attribute to the directive and the appropriate view type as the value. Refer to the Google Picker <a href="https://developers.google.com/picker/docs/reference#ViewId" target="_blank">documentation</a> for a complete list of View Ids.</p>
+  <p>When clicking the Google Drive Picker button, you may need to authenticate yourself to use Google Picker by entering your Google credentials. Once authorized, the Google Picker modal is launched and you are prompted to select a file of your choice. By default, all Google Drive document types are displayed. You can specify a particular document type by providing a <code>view-id</code> attribute to the directive and the appropriate view type as the value. Refer to the <a href="https://developers.google.com/picker/docs/reference#ViewId" target="_blank">Google Picker Reference Guide</a> for a complete list of View Ids.</p>
+  <p>An event will be <code>$emit</code> called <code>cancel</code> if you click the "Cancel" button in the Google Picker modal.</p>
+  <p>An event will be <code>$emit</code> called <code>picked</code> when you select a file in the Google Picker modal and this event will provide the Google <code>Response.DOCUMENTS</code> array as its data. Refer to the <a href="https://developers.google.com/picker/docs/reference#Response" target="_blank">Google Picker Reference Guide</a> for more details regarding the structure of the data.</p>
   <hljs include="'google-drive-picker-usage'"></hljs>
 
   <h3>Script Includes</h3>
