@@ -1,9 +1,12 @@
-(function (window/*, handleClientJSLoad*/){
+(function (window, handleClientJSLoad){
   "use strict";
+
+  /* global handleClientJSLoad:false */
+
   window.gapi = {
-    load: function (name, options) {
-      if (options.callback) {
-        options.callback();
+    load: function (name, callback) {
+      if (callback) {
+        callback();
       }
     },
     auth: {
@@ -310,7 +313,6 @@
     window._pickerCallbackFn.call(null, req);
   };
 
-  //TODO: Once the directive is hooked up with the new services, handleClientJSLoad will be uncommented in this file
-  //handleClientJSLoad();
+  handleClientJSLoad();
 
-})(window/*, handleClientJSLoad*/);
+})(window, handleClientJSLoad);

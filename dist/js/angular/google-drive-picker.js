@@ -2,83 +2,17 @@
 /* exported CONFIG */
 if (typeof CONFIG === "undefined") {
   var CONFIG = {
-    GOOGLE_CLIENT_ID: "614513768474.apps.googleusercontent.com"
+    // variables go here
   };
 }
 
-/* global CONFIG: true */
-/* global RiseVision: true */
-/* global gapi: false */
-/* exported RiseVision */
-
-if (typeof RiseVision === "undefined") {
-  var RiseVision = {Authorization: {}};
-}
-
-;(function (CONFIG, gapi, RiseVision) {
-  "use strict";
-
-  RiseVision.Authorization = (function () {
-
-    var oauthToken = null,
-      loaded = false;
-
-    function authorize(immediate, scope, callbackFn) {
-      gapi.auth.authorize({
-        client_id : CONFIG.GOOGLE_CLIENT_ID,
-        scope : scope,
-        immediate : immediate
-      }, function (authResult) {
-        if (authResult && !authResult.error) {
-          oauthToken = authResult.access_token;
-        } else {
-          if (window.console) {
-            console.info("Authorization Fail: " + authResult.error);
-          }
-        }
-        callbackFn.call(null, oauthToken);
-      });
-    }
-
-    function isApiLoaded() {
-      return loaded;
-    }
-
-    function loadApi(callbackFn) {
-      // Use the API Loader script to load the Authentication script.
-      gapi.load("auth", {"callback": function () {
-        loaded = true;
-        if (typeof callbackFn === "function") {
-          callbackFn.apply(null);
-        }
-      }});
-    }
-
-    function getAuthToken() {
-      return oauthToken;
-    }
-
-    return {
-      authorize: authorize,
-      getAuthToken: getAuthToken,
-      isApiLoaded: isApiLoaded,
-      loadApi: loadApi
-    };
-  })();
-})(CONFIG, gapi, RiseVision);
-
-/* global RiseVision: false */
-
-(function (RiseVision) {
+(function (angular) {
 
   "use strict";
-
-  var authorization = RiseVision.Authorization,
-    AUTH_SCOPE = "https://www.googleapis.com/auth/drive";
 
   angular.module("risevision.widget.common.google-drive-picker", [])
-    .directive("googleDrivePicker", ["$document", "$window", "$log", "$templateCache",
-      function ($document, $window, $log, $templateCache) {
+    .directive("googleDrivePicker", ["$window", "$document", "$log", "$templateCache", "apiAuth", "apiGooglePicker",
+      function ($window, $document, $log, $templateCache, apiAuth, apiGooglePicker) {
       return {
         restrict: "E",
         scope: {
@@ -86,26 +20,11 @@ if (typeof RiseVision === "undefined") {
         },
         template: $templateCache.get("google-drive-picker-template.html"),
         link: function (scope, $element, attrs) {
-          var document = $document[0];
-          var viewId = attrs.viewId || "docs";
-          function create() {
-            var google = $window.google,
-                gapi = $window.gapi,
-                pickerApiLoaded = false,
-                viewMap = {
-                  "docs": google.picker.ViewId.DOCS,
-                  "docs_images": google.picker.ViewId.DOCS_IMAGES,
-                  "documents": google.picker.ViewId.DOCUMENTS,
-                  "presentations": google.picker.ViewId.PRESENTATIONS,
-                  "spreadsheets": google.picker.ViewId.SPREADSHEETS,
-                  "forms": google.picker.ViewId.FORMS,
-                  "docs_images_and_videos": google.picker.ViewId.DOCS_IMAGES_AND_VIDEOS,
-                  "docs_videos": google.picker.ViewId.DOCS_VIDEOS,
-                  "folders": google.picker.ViewId.FOLDERS,
-                  "pdfs": google.picker.ViewId.PDFS
-                };
+          var document = $document[0],
+            viewId = attrs.viewId || "docs";
 
-            function onPickerAction(data) {
+          function onPickerAction(data) {
+            apiGooglePicker.get().then(function (google) {
               if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
                 $log.debug("Files picked", data[google.picker.Response.DOCUMENTS]);
                 scope.$emit("picked", data[google.picker.Response.DOCUMENTS]);
@@ -114,77 +33,57 @@ if (typeof RiseVision === "undefined") {
                 $log.debug("File pick cancelled");
                 scope.$emit("cancel");
               }
+            });
+          }
+
+          function createPicker(google) {
+            var parser = document.createElement("a"),
+              origin,
+              picker;
+
+            if (document.referrer) {
+              parser.href = document.referrer;
+              origin = parser.protocol + "//" + parser.hostname;
+            } else {
+              // Testing component locally (http://localhost:8099), so component is not within an iframe
+              origin = $window.location.protocol + "//" + $window.location.host;
             }
 
-            function createPicker() {
-              var parser = document.createElement("a"),
-                origin,
-                picker;
+            picker = new google.picker.PickerBuilder()
+              .setOrigin(origin)
+              .addView(viewId)
+              .setOAuthToken(apiAuth.getAuthToken())
+              .setCallback(onPickerAction)
+              .build();
 
-              if (document.referrer) {
-                parser.href = document.referrer;
-                origin = parser.protocol + "//" + parser.hostname;
-              } else {
-                /* Testing component locally (http://localhost:8099), so component is
-                 not within an iframe
-                 */
-                origin = $window.location.protocol + "//" + $window.location.host;
-              }
+            picker.setVisible(true);
+          }
 
-              if (pickerApiLoaded && authorization.getAuthToken()) {
-                picker = new google.picker.PickerBuilder()
-                  .setOrigin(origin)
-                  .addView(viewMap[viewId])
-                  .setOAuthToken(authorization.getAuthToken())
-                  .setCallback(onPickerAction)
-                  .build();
-
-                picker.setVisible(true);
-              }
+          $element.on("click", function () {
+            if (apiAuth.getAuthToken()) {
+              apiGooglePicker.get().then(createPicker);
             }
-
-            function onPickerApiLoaded() {
-              pickerApiLoaded = true;
-              createPicker();
-            }
-
-            $element.on("click", function () {
-              if (pickerApiLoaded && authorization.getAuthToken()) {
-                createPicker();
-                return;
-              }
-              else if (!authorization.getAuthToken()) {
-                // Initiate the authorization this time with UI (immediate = false)
-                authorization.authorize(false, AUTH_SCOPE, function (oauthToken) {
-                  if (oauthToken) {
-                    gapi.load("picker", {callback: onPickerApiLoaded });
+            else if (!apiAuth.getAuthToken()) {
+              // Authorize this time with UI (immediate = false)
+              apiAuth.authorize(false)
+                .then(function (authResult) {
+                  if (authResult && !authResult.error) {
+                    apiGooglePicker.get().then(createPicker);
                   }
                 });
-                return;
-              }
+            }
+          });
 
-              if (!pickerApiLoaded) {
-                gapi.load("picker", {callback: onPickerApiLoaded });
-              }
+          // Silently try to authorize(immediate = true)
+          apiAuth.authorize(true)
+            .then(null, function (error) {
+              $log.warn(error);
             });
-          }
-
-          if (!authorization.isApiLoaded()) {
-            authorization.loadApi(function () {
-              // Initiate the authorization without UI (immediate = true)
-
-              authorization.authorize(true, AUTH_SCOPE, function () {
-                $window.gapi.load("picker", {callback: create });
-              });
-            });
-          } else {
-            create();
-          }
         }
       };
     }]);
 
-})(RiseVision);
+})(angular);
 
 (function(module) {
 try { app = angular.module("risevision.widget.common.google-drive-picker"); }
@@ -196,3 +95,171 @@ app.run(["$templateCache", function($templateCache) {
     "");
 }]);
 })();
+
+/* jshint ignore:start */
+var isClientJS = false;
+function handleClientJSLoad() {
+  isClientJS = true;
+
+  var evt = document.createEvent("Events");
+  evt.initEvent("gapi.loaded", true, true);
+
+  window.dispatchEvent(evt);
+}
+/* jshint ignore:end */
+
+(function (angular) {
+  "use strict";
+
+  angular.module("risevision.widget.common.google-drive-picker")
+    .factory("oauthAPILoader", ["$q", "$log", "gapiLoader",
+      function ($q, $log, gapiLoader) {
+        var deferred = $q.defer();
+        var promise;
+
+        var factory = {
+          get: function () {
+            if (!promise) {
+              promise = deferred.promise;
+              gapiLoader.get().then(function (gApi) {
+                gApi.load("auth", function () {
+                  $log.info("auth API is loaded");
+                  deferred.resolve(gApi);
+                });
+              });
+            }
+            return promise;
+          }
+        };
+        return factory;
+
+      }])
+    .factory("gapiLoader", ["$q", "$window",
+      function ($q, $window) {
+
+        var factory = {
+          get: function () {
+            var deferred = $q.defer(),
+              gapiLoaded;
+
+            if ($window.isClientJS) {
+              deferred.resolve($window.gapi);
+            } else {
+              gapiLoaded = function () {
+                deferred.resolve($window.gapi);
+                $window.removeEventListener("gapi.loaded", gapiLoaded, false);
+              };
+              $window.addEventListener("gapi.loaded", gapiLoaded, false);
+            }
+            return deferred.promise;
+          }
+        };
+        return factory;
+
+      }])
+    .factory("pickerLoader", ["$q", "$window", "$log", "gapiLoader",
+      function($q, $window, $log, gapiLoader) {
+
+        var factory = {
+          get: function () {
+            var deferred = $q.defer();
+            var promise;
+
+            if (!promise) {
+              promise = deferred.promise;
+              gapiLoader.get().then(function (gApi) {
+                gApi.load("picker", function () {
+                  $log.info("picker API is loaded");
+                  deferred.resolve(gApi);
+                });
+              });
+            }
+            return promise;
+          }
+        };
+
+        return factory;
+
+      }]);
+
+})(angular);
+
+
+
+(function(angular) {
+  "use strict";
+
+  angular.module("risevision.widget.common.google-drive-picker")
+
+    .value("CLIENT_ID", "614513768474.apps.googleusercontent.com")
+    .value("SCOPE", ["https://www.googleapis.com/auth/drive"])
+
+    .factory("apiAuth", ["$q", "$http", "$log", "gapiLoader", "oauthAPILoader", "CLIENT_ID", "SCOPE",
+      function($q, $http, $log, gapiLoader, oauthAPILoader, CLIENT_ID, SCOPE) {
+
+        var oauthToken = null,
+          factory = {};
+
+        factory.authorize = function(attemptImmediate) {
+          var authorizeDeferred = $q.defer();
+
+          var opts = {
+            client_id: CLIENT_ID,
+            scope: SCOPE,
+            immediate: attemptImmediate
+          };
+
+          oauthAPILoader.get().then(function (gApi) {
+            gApi.auth.authorize(opts, function (authResult) {
+
+              if (authResult && !authResult.error) {
+                oauthToken = authResult.access_token;
+                authorizeDeferred.resolve(authResult);
+              } else {
+                authorizeDeferred.reject("Authentication Error: " + authResult.error);
+                $log.debug("authorize result", authResult);
+              }
+            });
+          });
+          return authorizeDeferred.promise;
+        };
+
+        factory.getAuthToken = function () {
+          return oauthToken;
+        };
+
+        return factory;
+
+      }]);
+
+})(angular);
+
+
+
+(function(angular) {
+  "use strict";
+
+  angular.module("risevision.widget.common.google-drive-picker")
+
+    .factory("apiGooglePicker", ["$q", "$window", "$log", "pickerLoader",
+      function ($q, $window, $log, pickerLoader) {
+        var deferred = $q.defer();
+        var promise;
+
+        var factory = {
+          get: function () {
+            if (!promise) {
+              promise = deferred.promise;
+              pickerLoader.get().then(function () {
+                deferred.resolve($window.google);
+              });
+            }
+            return promise;
+          }
+        };
+
+        return factory;
+
+      }]);
+
+})(angular);
