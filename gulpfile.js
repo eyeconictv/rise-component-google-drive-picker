@@ -95,7 +95,6 @@
   gulp.task("test:e2e:ng:core", factory.testE2EAngular());
   gulp.task("test:ensure-directory", factory.ensureReportDirectory());
 
-  // Test the Angular version
   gulp.task("test:e2e:ng", ["test:ensure-directory", "webdriver_update"], function (cb) {
     return runSequence("e2e:server", "test:e2e:ng:core",
     function (err) {
@@ -104,10 +103,22 @@
     });
   });
 
+  gulp.task("test:unit:ng", factory.testUnitAngular({
+    testFiles: [
+      "components/q/q.js",
+      "components/angular/angular.js",
+      "components/angular-mocks/angular-mocks.js",
+      "node_modules/widget-tester/mocks/gapi-picker-mock.js",
+      "src/config/test.js",
+      "src/angular/*.js",
+      "test/unit/**/*spec.js"
+    ]
+  }));
+
   gulp.task("test:metrics", factory.metrics());
 
   gulp.task("test", ["build"], function (cb) {
-    return runSequence("test:e2e:ng", "test:metrics", cb);
+    return runSequence("test:unit:ng", "test:e2e:ng", "test:metrics", cb);
   });
 
   gulp.task("default", ["build"]);
