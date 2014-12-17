@@ -1,4 +1,4 @@
-# Google Drive Picker [![Build Status](http://devtools1.risevision.com:8080/job/Component-Google-Drive-Picker-Master/badge/icon)](http://devtools1.risevision.com:8080/job/Component-Google-Drive-Picker-Master/)
+# Google Drive Picker [![Circle CI](https://circleci.com/gh/Rise-Vision/component-google-drive-picker/tree/master.svg?style=svg)](https://circleci.com/gh/Rise-Vision/component-google-drive-picker/tree/master)
 
 ## Introduction
 
