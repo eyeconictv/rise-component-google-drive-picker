@@ -5,7 +5,7 @@
   var gutil = require("gulp-util");
   var path = require("path");
   var rename = require("gulp-rename");
-  var rimraf = require("gulp-rimraf");
+  var del = require("del");
   var concat = require("gulp-concat");
   var bump = require("gulp-bump");
   var runSequence = require("run-sequence");
@@ -14,25 +14,8 @@
   var html2js = require("gulp-html2js");
   var factory = require("widget-tester").gulpTaskFactory;
 
-  gulp.task("clean-dist", function () {
-    return gulp.src("dist", {read: false})
-      .pipe(rimraf());
-  });
-
-  gulp.task("clean-tmp", function () {
-    return gulp.src("tmp", {read: false})
-      .pipe(rimraf());
-  });
-
-  gulp.task("clean", ["clean-dist", "clean-tmp"]);
-
-  gulp.task("config", function() {
-    var env = process.env.NODE_ENV || "dev";
-    gutil.log("Environment is", env);
-
-    return gulp.src(["./src/config/" + env + ".js"])
-      .pipe(rename("config.js"))
-      .pipe(gulp.dest("./src/config"));
+  gulp.task("clean", function () {
+    del(["./dist/**", "./tmp/**"]);
   });
 
   // Defined method of updating:
@@ -44,9 +27,7 @@
   });
 
   gulp.task("lint", function() {
-    return gulp.src([
-      "src/**/*.js",
-      "test/**/*.js"])
+    return gulp.src("src/**/*.js")
       .pipe(jshint())
       .pipe(jshint.reporter("jshint-stylish"))
       .pipe(jshint.reporter("fail"));
@@ -65,7 +46,6 @@
 
   gulp.task("angular", ["angular:html2js", "lint"], function () {
     return gulp.src([
-      "src/config/config.js",
       "src/angular/dtv-google-drive-picker.js",
       "tmp/ng-templates/*.js",
       "src/angular/svc-gapi.js",
@@ -85,7 +65,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config"], ["js-uglify"], cb);
+    runSequence(["clean"], ["js-uglify"], cb);
   });
 
   gulp.task("e2e:server", factory.testServer());
@@ -108,17 +88,17 @@
       "components/q/q.js",
       "components/angular/angular.js",
       "components/angular-mocks/angular-mocks.js",
+      "components/angular-translate/angular-translate.js",
+      "components/rv-common-i18n/dist/i18n.js",
+      "node_modules/widget-tester/mocks/i18n-config.js",
       "node_modules/widget-tester/mocks/gapi-picker-mock.js",
-      "src/config/test.js",
       "src/angular/*.js",
       "test/unit/**/*spec.js"
     ]
   }));
 
-  gulp.task("test:metrics", factory.metrics());
-
   gulp.task("test", ["build"], function (cb) {
-    return runSequence("test:unit:ng", "test:e2e:ng", "test:metrics", cb);
+    return runSequence("test:unit:ng", "test:e2e:ng", cb);
   });
 
   gulp.task("default", ["build"]);
