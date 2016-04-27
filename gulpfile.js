@@ -5,7 +5,7 @@
   var gutil = require("gulp-util");
   var path = require("path");
   var rename = require("gulp-rename");
-  var rimraf = require("gulp-rimraf");
+  var del = require("del");
   var concat = require("gulp-concat");
   var bump = require("gulp-bump");
   var runSequence = require("run-sequence");
@@ -14,17 +14,9 @@
   var html2js = require("gulp-html2js");
   var factory = require("widget-tester").gulpTaskFactory;
 
-  gulp.task("clean-dist", function () {
-    return gulp.src("dist", {read: false})
-      .pipe(rimraf());
+  gulp.task("clean", function () {
+    del(["./dist/**", "./tmp/**"]);
   });
-
-  gulp.task("clean-tmp", function () {
-    return gulp.src("tmp", {read: false})
-      .pipe(rimraf());
-  });
-
-  gulp.task("clean", ["clean-dist", "clean-tmp"]);
 
   // Defined method of updating:
   // Semantic
