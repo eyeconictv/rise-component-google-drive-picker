@@ -83,6 +83,22 @@
 
 })(angular);
 
+(function(module) {
+try { module = angular.module("risevision.widget.common.google-drive-picker"); }
+catch(err) { module = angular.module("risevision.widget.common.google-drive-picker", []); }
+module.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("google-drive-picker-template.html",
+    "<div class=\"google-drive-picker\">\n" +
+    "  <button type=\"button\" class=\"btn btn-default\">\n" +
+    "    {{\"google-drive-picker.select\" | translate }}\n" +
+    "    <img class=\"icon-right\" src=\"//s3.amazonaws.com/Rise-Images/Icons/drive.svg\">\n" +
+    "  </button>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
 /* jshint ignore:start */
 var isClientJS = false;
 function handleClientJSLoad() {
