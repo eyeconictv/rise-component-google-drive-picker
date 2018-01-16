@@ -83,22 +83,6 @@
 
 })(angular);
 
-(function(module) {
-try { module = angular.module("risevision.widget.common.google-drive-picker"); }
-catch(err) { module = angular.module("risevision.widget.common.google-drive-picker", []); }
-module.run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("google-drive-picker-template.html",
-    "<div class=\"google-drive-picker\">\n" +
-    "  <button type=\"button\" class=\"btn btn-default\">\n" +
-    "    {{\"google-drive-picker.select\" | translate }}\n" +
-    "    <img class=\"icon-right\" src=\"//s3.amazonaws.com/Rise-Images/Icons/drive.svg\">\n" +
-    "  </button>\n" +
-    "</div>\n" +
-    "");
-}]);
-})();
-
 /* jshint ignore:start */
 var isClientJS = false;
 function handleClientJSLoad() {
@@ -194,8 +178,8 @@ function handleClientJSLoad() {
 
   angular.module("risevision.widget.common.google-drive-picker")
 
-    .value("CLIENT_ID", "614513768474.apps.googleusercontent.com")
-    .value("SCOPE", ["https://www.googleapis.com/auth/drive"])
+    .value("CLIENT_ID", "614513768474-s4mo41canhfo0pco4pstn8m5v78kf5lv.apps.googleusercontent.com")
+    .value("SCOPE", ["https://www.googleapis.com/auth/drive.readonly"])
 
     .factory("apiAuth", ["$q", "$http", "$log", "gapiLoader", "oauthAPILoader", "CLIENT_ID", "SCOPE",
       function($q, $http, $log, gapiLoader, oauthAPILoader, CLIENT_ID, SCOPE) {
@@ -236,8 +220,6 @@ function handleClientJSLoad() {
       }]);
 
 })(angular);
-
-
 
 (function(angular) {
   "use strict";
