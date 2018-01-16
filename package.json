@@ -1,6 +1,6 @@
 {
   "name": "component-google-drive-picker",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A handy widget settings UI component to launch Google Drive Picker",
   "main": "gulpfile.js",
   "scripts": {

@@ -3,8 +3,8 @@
 
   angular.module("risevision.widget.common.google-drive-picker")
 
-    .value("CLIENT_ID", "614513768474.apps.googleusercontent.com")
-    .value("SCOPE", ["https://www.googleapis.com/auth/drive"])
+    .value("CLIENT_ID", "614513768474-s4mo41canhfo0pco4pstn8m5v78kf5lv.apps.googleusercontent.com")
+    .value("SCOPE", ["https://www.googleapis.com/auth/drive.readonly"])
 
     .factory("apiAuth", ["$q", "$http", "$log", "gapiLoader", "oauthAPILoader", "CLIENT_ID", "SCOPE",
       function($q, $http, $log, gapiLoader, oauthAPILoader, CLIENT_ID, SCOPE) {
@@ -45,5 +45,3 @@
       }]);
 
 })(angular);
-
-
