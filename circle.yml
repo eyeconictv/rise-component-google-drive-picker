@@ -5,6 +5,11 @@ dependencies:
   pre:
     - npm install -g gulp
     - npm install -g bower
+    - sudo apt-get update
+    - sudo apt-get install python-dev
+    # latest stable chrome
+    - curl -L -o google-chrome-stable.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - sudo dpkg -i google-chrome-stable.deb
   post:
     - bower install
     - wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
