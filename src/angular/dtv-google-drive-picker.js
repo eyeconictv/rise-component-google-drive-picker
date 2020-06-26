@@ -33,19 +33,19 @@
               origin,
               picker;
 
-            if (document.referrer) {
-              if (document.location.hostname === "localhost") {
-                // Component is within an iframe, but likely within a widget settings tested locally (localhost:8000)
-                origin = $window.location.protocol + "//" + $window.location.host;
+              if (document.referrer) {
+                // if (document.location.hostname === "localhost") {
+                  // Component is within an iframe, but likely within a widget settings tested locally (localhost:8000)
+                  origin = $window.location.protocol + "//" + $window.location.host;
+                // } else {
+                //   // Component is within an iframe
+                //   parser.href = document.referrer;
+                //   origin = parser.protocol + "//" + parser.hostname;
+                // }
               } else {
-                // Component is within an iframe
-                parser.href = document.referrer;
-                origin = parser.protocol + "//" + parser.hostname;
+                // Component is not within an iframe, likely testing locally in this repo (localhost:8099)
+                origin = $window.location.protocol + "//" + $window.location.host;
               }
-            } else {
-              // Component is not within an iframe, likely testing locally in this repo (localhost:8099)
-              origin = $window.location.protocol + "//" + $window.location.host;
-            }
 
             picker = new google.picker.PickerBuilder()
               .setOrigin(origin)
