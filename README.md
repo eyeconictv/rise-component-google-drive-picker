@@ -11,6 +11,7 @@ Google Drive Picker works in conjunction with [Rise Vision](http://www.risevisio
 At this time Chrome is the only browser that this project and Rise Vision supports.
 
 ## Built With
+- Nodejs 6.17.1
 - NPM (node package manager)
 - Angularjs
 - Gulp
